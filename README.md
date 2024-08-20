@@ -16,7 +16,7 @@ _Respuesta Copilot CLI_:
 ```powershell
 Suggestion:
 
-  dotnet new webapi -n YourProjectName
+  dotnet new webapi --use-controllers -n YourProjectName
 
 ? Select an option
 > Copy command to clipboard
@@ -29,7 +29,7 @@ Suggestion:
 
 2. Seleccionamos la opcion `Copy command to clipboard` y cambiamos el nombre del proyecto por Marena.API
 ```powershell
-dotnet new webapi -n Marena.API
+dotnet new webapi --use-controllers -n Marena.API
 ```
 
 3. Generamos un nuevo archivo de solucion llamado **Marena**
