@@ -1,14 +1,12 @@
 # Copilot Training - .NET 8 + Entity Framework Core.
--------
-Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfocadas en el framework .NET 8.
 
+Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfocadas en el framework .NET 8.
 - Crear y configurar un nuevo proyecto dotnet api.
 - Configurar conexion a bases de datos.
 - Aplicacion del patron repositorio.
 - Configuracion de metodos CRUD y Controladores REST.
 
 ## Paso 1: Crear un proyecto .NET API utilizando Github Copilot CLI.
--------
 
 1. Consultar a copilot CLI el comando para generar un nuevo proyecto .NET API
 ```powershell
