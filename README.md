@@ -290,3 +290,201 @@ namespace Marena.API.Controllers
 - Agregamos este archivo con el nombre de `MoviesController.cs` bajo la carpeta de `Controllers`
 - Ejecutamos la aplicacion directamente desde Visual Studio.
 - Probamos el API mediante algun cliente como Postman, Insomnia o Swagger.
+
+## Paso 7. Abstraccion de la logica a Servicios.
+
+Una buena practica de desarrollo, consiste en abstraer la logica existente en Controladores a una clase servicio, que permita implementar diferentes acciones del negocio. Delegando a los controladores la exclusiva responsabilidad de gestionar la entrada y salida de datos del API.
+
+1. Indicamos a Copilot Chat que genere la estructura de la clase servicio.
+```
+Create a Service Class That contains all the logic for CRUD operations of #Models.cs Entity and implement it on #MoviesController.cs
+```
+2. Creamos una carpeta llamada `Services` y dentro de ella dos subcarpetas llamadas `Interfaces` e `Implementations` en donde colocaremos las interfaces y los servicios respectivamente.
+   
+3. Incorporamos las sugerencias de codigo proporcionadas por Copilot Chat segun corresponda.
+
+- Insertamos un nuevo archivo con el contenido de la interfaz `IMovieService` en la carpeta `Interfaces`
+```C#
+using Marena.API.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public interface IMovieService
+{
+    Task<IEnumerable<Movie>> GetMoviesAsync();
+    Task<Movie> GetMovieByIdAsync(int id);
+    Task<Movie> AddMovieAsync(Movie movie);
+    Task<Movie> UpdateMovieAsync(int id, Movie movie);
+    Task<bool> DeleteMovieAsync(int id);
+}
+
+```
+- Insertamos un nuevo archivo con el contenido de la implementacion del servicio llamado `MovieService` en la carpeta `Implementations`
+```C#
+using Marena.API.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class MovieService : IMovieService
+{
+    private readonly MarenaDBContext _context;
+
+    public MovieService(MarenaDBContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IEnumerable<Movie>> GetMoviesAsync()
+    {
+        return await _context.Movies.ToListAsync();
+    }
+
+    public async Task<Movie> GetMovieByIdAsync(int id)
+    {
+        return await _context.Movies.FindAsync(id);
+    }
+
+    public async Task<Movie> AddMovieAsync(Movie movie)
+    {
+        _context.Movies.Add(movie);
+        await _context.SaveChangesAsync();
+        return movie;
+    }
+
+    public async Task<Movie> UpdateMovieAsync(int id, Movie movie)
+    {
+        if (id != movie.Id)
+        {
+            return null;
+        }
+
+        _context.Entry(movie).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!await MovieExistsAsync(id))
+            {
+                return null;
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        return movie;
+    }
+
+    public async Task<bool> DeleteMovieAsync(int id)
+    {
+        var movie = await _context.Movies.FindAsync(id);
+        if (movie == null)
+        {
+            return false;
+        }
+
+        _context.Movies.Remove(movie);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    private async Task<bool> MovieExistsAsync(int id)
+    {
+        return await _context.Movies.AnyAsync(e => e.Id == id);
+    }
+}
+```
+- Actualizamos el codigo del controlador `MoviesController.cs` con la implementacion de los metodos del servicio `MoviesService`
+```C#
+using Marena.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Marena.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MoviesController : ControllerBase
+    {
+        private readonly IMovieService _movieService;
+
+        public MoviesController(IMovieService movieService)
+        {
+            _movieService = movieService;
+        }
+
+        // GET: api/Movies
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        {
+            var movies = await _movieService.GetMoviesAsync();
+            return Ok(movies);
+        }
+
+        // GET: api/Movies/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Movie>> GetMovie(int id)
+        {
+            var movie = await _movieService.GetMovieByIdAsync(id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(movie);
+        }
+
+        // PUT: api/Movies/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        {
+            var updatedMovie = await _movieService.UpdateMovieAsync(id, movie);
+
+            if (updatedMovie == null)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Movies
+        [HttpPost]
+        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        {
+            var createdMovie = await _movieService.AddMovieAsync(movie);
+            return CreatedAtAction(nameof(GetMovie), new { id = createdMovie.Id }, createdMovie);
+        }
+
+        // DELETE: api/Movies/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMovie(int id)
+        {
+            var result = await _movieService.DeleteMovieAsync(id);
+
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+    }
+}
+
+```
+
+- Registramos la inyeccion de depencias del servicio `MoviesService` y la interfaz `IMoviesService` en el metodo `Builder.service` del archivo `Program.cs`
+```C#
+// Register the MovieService
+builder.Services.AddScoped<IMovieService, MovieService>();
+```
+
+4. Ejecutamos el API nuevamente y probamos el funcionamiento correcto de los metodos CRUD.
