@@ -1,3 +1,4 @@
+using Marena.API.Models;
 using Marena.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

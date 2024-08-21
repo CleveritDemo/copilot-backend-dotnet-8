@@ -1,3 +1,4 @@
+using Marena.API.Persistence;
 using Marena.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

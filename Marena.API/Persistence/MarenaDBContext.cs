@@ -1,4 +1,7 @@
+using Marena.API.Models;
 using Microsoft.EntityFrameworkCore;
+
+namespace Marena.API.Persistence;
 
 public class MarenaDBContext : DbContext
 {
@@ -6,6 +9,5 @@ public class MarenaDBContext : DbContext
     {
     }
 
-    // Define DbSet properties for your entities here
-    public DbSet<Movie> Movies { get; set; }
+    public virtual DbSet<Movie> Movies { get; set; }
 }
