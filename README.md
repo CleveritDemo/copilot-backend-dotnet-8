@@ -489,7 +489,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 
 4. Ejecutamos el API nuevamente y probamos el funcionamiento correcto de los metodos CRUD.
 
-## Paso 7. Creamos las pruebas unitarias para el servicio de Movies Service.
+## Paso 8. Creamos las pruebas unitarias para el servicio de Movies Service.
 Empleando Copilot Chat, se le solicita la construiccion de los test unitarios mediante el siguiente prompt:
 ```
 Create unit tests for the #file:'MoviesService.cs' in the #file:'Marena.Tests.csproj' Project
