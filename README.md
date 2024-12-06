@@ -12,6 +12,12 @@ Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfoc
 ```powershell
 ghcs "How to create a .NET API project"
 ```
+
+**Tambien, es valido consultar con el chat directamente, usando el siguiente prompt**
+```
+Como puedo crear un proyecto API de .NET
+```
+
 _Respuesta Copilot CLI_:
 ```powershell
 Suggestion:
