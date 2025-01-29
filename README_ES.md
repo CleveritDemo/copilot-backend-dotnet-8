@@ -1,18 +1,18 @@
-# Copilot Training - .NET 8 + Entity Framework Core
+# Copilot Training - .NET 8 + Entity Framework Core.
 
-Demo Web API application for GitHub Copilot implementations focused on the .NET 8 framework.
-- Create and configure a new dotnet api project.
-- Configure database connection.
-- Service abstraction.
-- Configure CRUD methods and REST Controllers.
+Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfocadas en el framework .NET 8.
+- Crear y configurar un nuevo proyecto dotnet api.
+- Configurar conexion a bases de datos.
+- Abstraccion de servicios
+- Configuracion de metodos CRUD y Controladores REST.
 
-## Step 1: Create a .NET API project using GitHub Copilot CLI.
+## Paso 1: Crear un proyecto .NET API utilizando Github Copilot CLI.
 
-1. Ask Copilot CLI for the command to generate a new .NET API project
+1. Consultar a copilot CLI el comando para generar un nuevo proyecto .NET API
 ```powershell
-gh copilot suggest "How to create a .NET webapi project"
+gh copilot suggest "Como crear un proyecto de .NET webapi"
 ```
-_Copilot CLI Response_:
+_Respuesta Copilot CLI_:
 ```powershell
 Suggestion:
 
@@ -27,58 +27,58 @@ Suggestion:
   exit
 ```
 
-2. Select the `Copy command to clipboard` option and change the project name to Marena.API
+2. Seleccionamos la opcion `Copy command to clipboard` y cambiamos el nombre del proyecto por Marena.API
 ```powershell
 dotnet new webapi --use-controllers -n Marena.API
 ```
 
-3. Generate a new solution file named **Marena**
+3. Generamos un nuevo archivo de solucion llamado **Marena**
 ```powershell
 dotnet new sln -n Marena
 ```
 
-4. Use Copilot CLI to add the Marena.API project to the solution file created in the previous step.
+4. Usamos copilot CLI para agregar el proyecto Marena.API al archivo de solucion que hemos creado en el paso anterior.
 ```powershell
-gh copilot suggest "How can I add the Marena.API project to a solution file .sln"
+gh copilot suggest "Como puedo agregar el proyecto Marena.API dentro de un archivo de solucion .sln"
 ```
-_Copilot CLI Response_:
+_Respuesta Copilot CLI:_
 ```powershell
 dotnet sln Marena.sln add Marena.API/Marena.API.csproj
 ```
-5. Open the solution file with **Visual Studio**.
+5. Abrir archivo de solucion con **Visual Studio**.
 
-_Project structure obtained:_
+_Estructura del proyecto obtenida:_
 
 ![VisualStudio_Project_Structure](assets/Project_Structure.JPG)
 
-## Step 2. Create a Docker container to run SQL Server.
+## Paso 2. Crear un contenedor Docker para ejecutar SQL Server.
 
-1. Create a SQL Server docker container.
+1. Creamos un contenedor docker de SQL Server.
     ```powershell
-    gh copilot suggest "How can I run Microsoft SQL Server in a docker container?"
+    gh copilot suggest "¿Como puedo ejecutar Microsoft SQL Server en un contenedor docker?"
     ```
-- `docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourPassword123' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
-- If you don't have Docker installed on your PC, you can install it from [here](https://www.docker.com/products/docker-desktop).
-- If Docker is a limitation, you can install SQL Server Express from [here](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
+- ` docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourPassword123' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
+- Si no tienes Docker instalado en tu PC puedes instalarlo desde [aquí](https://www.docker.com/products/docker-desktop).
+- Si Docker es una limitante, puedes instalar SQL Server Express desde [aquí](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
 
-2. Validate connection with SQL Server.
-> You can test the connection using any database management tool like SQL Server Management Studio, Azure Data Studio, DBeaver, or Datagrip.
+2. Validar conexion con SQL Server.
+> Puedes probar la conexion utilizando cualquier herramienta de gestion de bases de datos como SQL Server Management Studio, Azure Data Studio, DBeaver o Datagrip.
 
-## Step 3. Configure Entity Framework Core.
+## Paso 3. Configurar Entity Framework Core.
 
-1. Using Copilot CLI, generate the commands to use.
+1. Usando Copilot CLI, generamos los comandos a utilizar.
 ```powershell
-gh copilot suggest "How can I correctly install and configure Entity Framework Core?"
+gh copilot suggest "¿Como puedo instalar y configurar correctamente Entity Framework Core?"
 ```
 - `dotnet add package Microsoft.EntityFrameworkCore`
 - `dotnet add package Microsoft.EntityFrameworkCore.Tools`
 - `dotnet add package Microsoft.EntityFrameworkCore.Design`
 
-## Step 4. Configure the DBContext.
+## Paso 4. Configuramos el DBContext.
 
-1. Using Copilot Chat, request to generate a class that inherits from DBContext.
+1. Usando Copilot Chat, solicitamos generar una clase que herede de DBContext.
     ```
-    Create a class named MarenaDBContext that inherits from DBContext
+    Crea una clase llamada MarenaDBContext que herede de DBContext
     ```
     ```C#
     using Microsoft.EntityFrameworkCore;
@@ -94,11 +94,11 @@ gh copilot suggest "How can I correctly install and configure Entity Framework C
     }
     ```
 
-2. Create a folder named `Persistence` and add the `MarenaDBContext` class suggested by Copilot inside that folder (Using the "Copy" or "Insert in new file" button).
+2. Generamos una carpeta llamada `Persistence` y agregamos la clase `MarenaDBContext` sugerida por Copilot dentro de esa carpeta (Mediante el boton "Copy" o "Insert in new file")
 
-3. Register the MarenaDBContext class in the services loaded by the builder in the Program.cs file.
+3. Registramos la clase MarenaDBContext en los servicios cargados por el builder en el archivo Program.cs
     ```
-    Register the MarenaDBContext in the `builder.services` method in the Program.cs file
+    Registrar el MarenaDBContext en el método `builder.services` en el archivo Program.cs
     ```
     ```C#
     // Register MarenaDBContext with the dependency injection container
@@ -106,7 +106,7 @@ gh copilot suggest "How can I correctly install and configure Entity Framework C
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     ```
 
-4. Configure the default connection string to the SQL Server database.
+4. Configuramos la cadena de conexion por defecto a la base de datos SQL Server.
     ```
     Add default connection string to appsettings.json
     ```
@@ -120,21 +120,21 @@ gh copilot suggest "How can I correctly install and configure Entity Framework C
 ### Troubleshooting
 
 #### UseSqlServer
-It may happen that at this point, an error is generated when calling the `UseSqlServer` method. Using Copilot, we can investigate the cause of the error.
-To solve it, we do the following:
+Puede pasar que a estas alturas, se nos genere un error al momento de llamar al metodo `UseSqlServer`, utilizando Copilot podemos investigar la causa del error.
+Para solventarlo realziamos lo siguiente:
 
-- Select the method we just added.
-- Right-click on the selection and select the "ask copilot" option.
-- In the chat window, use the `/explain` command.
+- Seleccionamos el metodo que acabamos de agregar.
+- Hacemos click derecho sobre la seleccion y seleccionamos la opcion "ask copilot"
+- En la ventana de chat, usamos el comando `/explain`
 - `/explain Why the UseSqlServer is highlighted as an error?`
 
-Copilot mentions that we forgot to add the reference to the `Microsoft.EntityFrameworkCore.SqlServer` package. There are several ways to add this package to the project, for this occasion we will use the `dotnet` command line.
+Copilot nos menciona que hemos olvidado incorporar la referencia al paquete `Microsoft.EntityFrameworkCore.SqlServer`. Existen diversas formas de incorporar este paquete al proyecto, para esta ocasion usaremos la linea de comandos de `dotnet`
 ```powershell
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 ```
 
 #### Trust Server Certificate.
-- Add this value at the end of the connection string: TrustServerCertificate=True;
+- Se debe agregar este valor al final de la cadena de conexion: TrustServerCertificate=True;
 
     ```json
     {
@@ -144,9 +144,9 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer
     }
     ```
 
-## Step 5. Configure Migrations and Movie Entity
+## Paso 5. Configurando Migraciones y Entidad Movies
 
-1. Using Copilot Chat, ask how to generate an entity named Movie, which contains the following attributes: Id, Name, Score, Genres, Year.
+1. Utilizando Copilot Chat preguntemos como generar una entidad llamada Movie, que contenga los siguientes atributos: Id, Name, Score, Genres, Year
     ```
     Generate an entity named Movie with the following attributes: Id, Name, Score, Genres, Year. Use Entity Framework Core Schema validations
     ```
@@ -176,7 +176,7 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer
     }
     ```
 
-2. Manually add the model to the previously defined DBContext.
+2. Agregamos manualmente el modelo dentro del DBContext que se ha definido anteriormente.
     ```C#
     using Microsoft.EntityFrameworkCore;
 
@@ -191,27 +191,27 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer
     }
     ```
 
-3. With the help of Copilot Chat, ask how to generate migrations to create the database and the Movie table.
+3. Con ayuda de Copilot Chat, solicitamos como generar las migraciones para crear la base de datos y la tabla Movie
 
     ```
-    What is the command to create migrations with Entity Framework Core?
+    ¿Cuál es el comando para crear migraciones con Entity Framework Core?
     ```
-    Copilot will possibly suggest two response options:
+    Copilot sugerira posiblemente dos opciones de respuesta:
 
-    **If we run everything from the Nuget Package Manager Console in Visual Studio**
+    **Si ejecutamos todo desde el Nuget Package Manager Console de Visual Studio**
     - `Add-Migration Initial_Migration`
     - `Update-Database`
 
-    **If we run everything from a terminal using dotnet cli**
+    **Si ejecutamos todo desde una terminal utilizando dotnet cli**
     - `dotnet ef migrations add Initial_Migration`
     - `dotnet ef database update`
 
-## Step 6. Add the controller for the Movie entity
+## Paso 6. Agregamos el controlador para la entidad Movie
 
-1. Using the Copilot Chat tool, generate a controller based on the `Movies` entity created earlier.
+1. Empleando la herramienta de Copilot Chat, generaremos un controlador basado en la entidad `Movies` generada anteriormente.
 
     ```
-    Create a .NET API Controller for #Movie.Cs Entity Note, here we use file references with the syntax "#[fileName]" in the chat.
+    Create a .NET API Controller for #Movie.Cs Entity Notese, como acá usamos las referencias de archivos con la sintaxis "#[fileName]" en el chat.
     ```
 
     ```C#
@@ -315,23 +315,23 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer
         }
     }
     ```
-    - Add this file with the name `MoviesController.cs` under the `Controllers` folder.
-    - Run the application directly from Visual Studio.
-    - Test the API using a client like **Postman**, **Insomnia**, or **Swagger**.
+    - Agregamos este archivo con el nombre de `MoviesController.cs` bajo la carpeta de `Controllers`
+    - Ejecutamos la aplicacion directamente desde Visual Studio.
+    - Probamos el API mediante algun cliente como **Postman**, **Insomnia** o **Swagger**.
 
-## Step 7. Abstract logic to Services.
+## Paso 7. Abstraccion de la logica a Servicios.
 
-A good development practice is to abstract the existing logic in Controllers to a service class, which allows implementing different business actions. Delegating to the controllers the exclusive responsibility of managing the input and output of API data.
+Una buena practica de desarrollo, consiste en abstraer la logica existente en Controladores a una clase servicio, que permita implementar diferentes acciones del negocio. Delegando a los controladores la exclusiva responsabilidad de gestionar la entrada y salida de datos del API.
 
-1. Ask Copilot Chat to generate the structure of the service class.
+1. Indicamos a Copilot Chat que genere la estructura de la clase servicio.
     ```
-    Create a service class that contains all the logic for CRUD operations of the #Models.cs entity and implement it in #MoviesController.cs.
+    Crea una clase de servicio que contenga toda la lógica para las operaciones CRUD de la entidad #Models.cs e impleméntala en #MoviesController.cs.
     ```
-2. Create a folder named `Services` and within it two subfolders named `Interfaces` and `Implementations` where we will place the interfaces and services respectively.
+2. Creamos una carpeta llamada `Services` y dentro de ella dos subcarpetas llamadas `Interfaces` e `Implementations` en donde colocaremos las interfaces y los servicios respectivamente.
    
-3. Incorporate the code suggestions provided by Copilot Chat as appropriate.
+3. Incorporamos las sugerencias de codigo proporcionadas por Copilot Chat segun corresponda.
 
-4. Insert a new file with the content of the `IMovieService` interface in the `Interfaces` folder.
+4. Insertamos un nuevo archivo con el contenido de la interfaz `IMovieService` en la carpeta `Interfaces`
     ```C#
     using Marena.API.Models;
     using System.Collections.Generic;
@@ -347,7 +347,7 @@ A good development practice is to abstract the existing logic in Controllers to 
     }
     ```
 
-5. Insert a new file with the content of the `MovieService` implementation in the `Implementations` folder.
+5. Insertamos un nuevo archivo con el contenido de la implementacion del servicio llamado `MovieService` en la carpeta `Implementations`
     ```C#
     using Marena.API.Models;
     using Microsoft.EntityFrameworkCore;
@@ -427,7 +427,7 @@ A good development practice is to abstract the existing logic in Controllers to 
         }
     }
     ```
-6. Update the `MoviesController.cs` code with the implementation of the `MoviesService` service methods.
+6. Actualizamos el codigo del controlador `MoviesController.cs` con la implementacion de los metodos del servicio `MoviesService`
     ```C#
     using Marena.API.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -508,54 +508,55 @@ A good development practice is to abstract the existing logic in Controllers to 
     }
     ```
 
-7. Register the dependency injection of the `MoviesService` service and the `IMoviesService` interface in the `Builder.service` method of the `Program.cs` file.
+7. Registramos la inyeccion de depencias del servicio `MoviesService` y la interfaz `IMoviesService` en el metodo `Builder.service` del archivo `Program.cs`
     ```C#
     // Register the MovieService
     builder.Services.AddScoped<IMovieService, MovieService>();
     ```
 
-8. Run the API again and test the correct functioning of the CRUD methods.
+8. Ejecutamos el API nuevamente y probamos el funcionamiento correcto de los metodos CRUD.
 
-## Step 8. Create unit tests for the Movies Service.
+## Paso 8. Creamos las pruebas unitarias para el servicio de Movies Service.
 
-To run unit tests, a new .NET project dedicated exclusively to tests will be created. Right-click on the solution file in the Visual Studio solution explorer, then click on Add and then on Project.
+Para la ejecución de test unitarios, se creará un nuevo proyecto de .NET dedicado exclusivamente a las pruebas para ello daremos click derecho sobre el archivo solucion en el explorador de soluciones de Visual Studio, luego click en Agregar (Add) y luego en Proyecto (project).
 
 ![Add Project](assets/add-project.png)
 
-The next step is to create a new project of type **xUnit Test Project**, click on **next** and at this point name it **Marena.Tests**. The .NET version to be selected should be the same as the one used in the Web API project, in this case, select .NET 8. Finally, click on **Create**.
+El siguiente paso es crear un nuevo proyecto del tipo **xUnit Test Project**, hacer click en **siguiente** y en este punto se le coloca el nombre de **Marena.Tests**. La version de .NET que debe seleccionarse debe ser la misma que utilzamos en el proyecto del Web API, para este caso se debe seleccionar .NET 8. Por ultimo se debe dar click en **Crear**
 
-With the test project created, the next step is to use GitHub Copilot to build and develop the unit tests using the following prompt:
+Con el proyecto de tests creado, el siguiente paso consiste en utilizar GitHub Copilot para que construya y desarrolle los tests unitarios mediante el siguiente prompt:
 
 ```
-Create unit tests for the file #file:'MoviesService.cs' in the project #file:'Marena.Tests.csproj'
+Crea pruebas unitarias para el archivo #file:'MoviesService.cs' en el proyecto #file:'Marena.Tests.csproj'
 ```
 
-This will create a suggestion in the chat for a new `MoviesServiceTest` file. This file should be created and can be added to the root directory of the Tests project.
+Esto creará en el chat la sugerencia para un nuevo archivo `MoviesServiceTest`. Este archivo debe crearse y puede agregarse en el directorio raiz del proyecto de Tests.
 
-Once this is done, to run the tests follow these steps:
+Una vez hecho esto, para ejecutar los tests se realizan los siguientes pasos:
 
-#### Using Visual Studio
-- Open the solution.
-- Build the solution.
-- Open the Test Explorer Test > Test Explorer.
-- Run all tests (Run All Tests).
+#### Usando Visual Studio
+- Abrir la solucion.
+- Compilar la solucion.
+- Abrir el explorador de pruebas Test > Test Explorer.
+- Ejecutar todas las pruebas (Run All Tests).
 
-#### Using .NET CLI
-- Using the terminal, navigate to the path of the `Marena.Tests` project.
+#### Usando .NET CLI
+- Usando la terminal navegar hacia la ruta del proyecto `Marena.Tests`
 ```powershell
 cd path/to/Marena.Tests
 ```
-- Run the test execution command.
+- Ejecutar el comando de ejecucion de pruebas
 ```powershell
 dotnet test
 ```
 
 ### Troubleshooting.
 
-Most likely, Copilot will try to use the Moq library to mock the database context of the project. However, this can result in many problems and errors in running unit tests in this project.
+Muy probablemente Copilot intente emplear la librería de Moq, para simular el contexto de Base de datos del proyecto. Sin embargo esto puede resultar en muchos problemas y errores en la ejecucion de pruebas unitarias en este proyecto.
 
-It is suggested to use Entity Framework's in-memory database instead of Moq for these tests. Add the following package to the Tests project: **Microsoft.EntityFrameworkCore.InMemory.**
+Se sugiere utilizar la base de datos en memoria de Entity Framework en lugar de Moq para estas pruebas. Agregando el siguiente parquete al proyecto de Pruebas: **Microsoft.EntityFrameworkCore.InMemory.**
 
-Using the following prompt:
+Mediante el siguiente Prompt
 ```
-I have noticed that using Moq in the test project to mock the project's DBContext will result in failures 100% of the time. Refactor the unit test code to use Entity Framework InMemory Database instead.
+He notado que el utilizar Moq en el proyecto de pruebas para emular el DBContext del proyecto resultara en fallos el 100% de los casos. Refactoriza el codigo de las pruebas unitarias para utilizar Entity Framework InMemory Database en su lugar.
+```
