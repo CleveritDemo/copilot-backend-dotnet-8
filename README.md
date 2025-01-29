@@ -10,7 +10,7 @@ Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfoc
 
 1. Consultar a copilot CLI el comando para generar un nuevo proyecto .NET API
 ```powershell
-ghcs "How to create a .NET API project"
+gh copilot suggest "How to create a .NET API project"
 ```
 _Respuesta Copilot CLI_:
 ```powershell
@@ -39,7 +39,7 @@ dotnet new sln -n Marena
 
 4. Usamos copilot CLI para agregar el proyecto Marena.API al archivo de solucion que hemos creado en el paso anterior.
 ```powershell
-ghcs "How to add Marena.API project to Marena solution file"
+gh copilot suggest "How to add Marena.API project to Marena solution file"
 ```
 _Respuesta Copilot CLI:_
 ```powershell
@@ -55,7 +55,7 @@ _Estructura del proyecto obtenida:_
 
 1. Creamos un contenedor docker de SQL Server.
 ```powershell
-ghcs "How can i run SQL Server in docker?"
+gh copilot suggest "How can i run SQL Server in docker?"
 ```
 - ` docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourPassword123' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
 - Si no tienes Docker instalado en tu PC puedes instalarlo desde [aquí](https://www.docker.com/products/docker-desktop).
@@ -68,7 +68,7 @@ ghcs "How can i run SQL Server in docker?"
 
 1. Usando Copilot CLI, generamos los comandos a utilizar.
 ```powershell
-ghcs "How to install and setup Entity Framework Core"
+gh copilot suggest "How to install and setup Entity Framework Core"
 ```
 - `dotnet add package Microsoft.EntityFrameworkCore`
 - `dotnet add package Microsoft.EntityFrameworkCore.Tools`
@@ -176,7 +176,7 @@ public class MarenaDBContext : DbContext
 
 3. Con ayuda de Copilot CLI, solicitamos como generar las migraciones para crear la base de datos y la tabla Movie
 ```powershell
-ghcs "What is the command to create migrations with Entity Framework Core?"
+gh copilot suggest "What is the command to create migrations with Entity Framework Core?"
 ```
 - `dotnet ef migrations add Initial_Migration`
 - `dotnet ef database update`
