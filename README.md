@@ -1,24 +1,18 @@
-# Copilot Training - .NET 8 + Entity Framework Core.
+# Copilot Training - .NET 8 + Entity Framework Core
 
-Aplicacion Web API de demostración para implementaciones de Gihub Copilot enfocadas en el framework .NET 8.
-- Crear y configurar un nuevo proyecto dotnet api.
-- Configurar conexion a bases de datos.
-- Abstraccion de servicios
-- Configuracion de metodos CRUD y Controladores REST.
+Demo Web API application for GitHub Copilot implementations focused on the .NET 8 framework.
+- Create and configure a new dotnet api project.
+- Configure database connection.
+- Service abstraction.
+- Configure CRUD methods and REST Controllers.
 
-## Paso 1: Crear un proyecto .NET API utilizando Github Copilot CLI.
+## Step 1: Create a .NET API project using GitHub Copilot CLI.
 
-1. Consultar a copilot CLI el comando para generar un nuevo proyecto .NET API
+1. Ask Copilot CLI for the command to generate a new .NET API project
 ```powershell
-ghcs "How to create a .NET API project"
+gh copilot suggest "How to create a .NET webapi project"
 ```
-
-**Tambien, es valido consultar con el chat directamente, usando el siguiente prompt**
-```
-Como puedo crear un proyecto API de .NET
-```
-
-_Respuesta Copilot CLI_:
+_Copilot CLI Response_:
 ```powershell
 Suggestion:
 
@@ -33,210 +27,364 @@ Suggestion:
   exit
 ```
 
-2. Seleccionamos la opcion `Copy command to clipboard` y cambiamos el nombre del proyecto por Marena.API
+2. Select the `Copy command to clipboard` option and change the project name to Marena.API
 ```powershell
 dotnet new webapi --use-controllers -n Marena.API
 ```
 
-3. Generamos un nuevo archivo de solucion llamado **Marena**
+3. Generate a new solution file named **Marena**
 ```powershell
 dotnet new sln -n Marena
 ```
 
-4. Usamos copilot CLI para agregar el proyecto Marena.API al archivo de solucion que hemos creado en el paso anterior.
+4. Use Copilot CLI to add the Marena.API project to the solution file created in the previous step.
 ```powershell
-ghcs "How to add Marena.API project to Marena solution file"
+gh copilot suggest "How can I add the Marena.API project to a solution file .sln"
 ```
-_Respuesta Copilot CLI:_
+_Copilot CLI Response_:
 ```powershell
 dotnet sln Marena.sln add Marena.API/Marena.API.csproj
 ```
-5. Abrir archivo de solucion con **Visual Studio**.
+5. Open the solution file with **Visual Studio**.
 
-_Estructura del proyecto obtenida:_
+_Project structure obtained:_
 
 ![VisualStudio_Project_Structure](assets/Project_Structure.JPG)
 
-## Paso 2. Crear un contenedor Docker para ejecutar SQL Server.
+## Step 2. Create a Docker container to run SQL Server.
 
-1. Creamos un contenedor docker de SQL Server.
+1. Create a SQL Server docker container.
+    ```powershell
+    gh copilot suggest "How can I run Microsoft SQL Server in a docker container?"
+    ```
+- `docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourPassword123' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
+- If you don't have Docker installed on your PC, you can install it from [here](https://www.docker.com/products/docker-desktop).
+- If Docker is a limitation, you can install SQL Server Express from [here](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
+
+2. Validate connection with SQL Server.
+> You can test the connection using any database management tool like SQL Server Management Studio, Azure Data Studio, DBeaver, or Datagrip.
+
+## Step 3. Configure Entity Framework Core.
+
+1. Using Copilot CLI, generate the commands to use.
 ```powershell
-ghcs "How can i run SQL Server in docker?"
-```
-- ` docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourPassword123' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
-- Si no tienes Docker instalado en tu PC puedes instalarlo desde [aquí](https://www.docker.com/products/docker-desktop).
-- Si Docker es una limitante, puedes instalar SQL Server Express desde [aquí](https://www.microsoft.com/en-us/sql-server/sql-server-downloads).
-
-2. Validar conexion con SQL Server.
-> Puedes probar la conexion utilizando cualquier herramienta de gestion de bases de datos como SQL Server Management Studio, Azure Data Studio, DBeaver o Datagrip.
-
-## Paso 3. Configurar Entity Framework Core.
-
-1. Usando Copilot CLI, generamos los comandos a utilizar.
-```powershell
-ghcs "How to install and setup Entity Framework Core"
+gh copilot suggest "How can I correctly install and configure Entity Framework Core?"
 ```
 - `dotnet add package Microsoft.EntityFrameworkCore`
 - `dotnet add package Microsoft.EntityFrameworkCore.Tools`
 - `dotnet add package Microsoft.EntityFrameworkCore.Design`
 
-## Paso 4. Configuramos el DBContext.
+## Step 4. Configure the DBContext.
 
-1. Usando Copilot Chat, solicitamos generar una clase que herede de DBContext.
+1. Using Copilot Chat, request to generate a class that inherits from DBContext.
+    ```
+    Create a class named MarenaDBContext that inherits from DBContext
+    ```
+    ```C#
+    using Microsoft.EntityFrameworkCore;
 
-- Create a class named `MarenaDBContext` taht inherits from `DBContext`
-```C#
-using Microsoft.EntityFrameworkCore;
-
-public class MarenaDBContext : DbContext
-{
-    public MarenaDBContext(DbContextOptions<MarenaDBContext> options) : base(options)
+    public class MarenaDBContext : DbContext
     {
+        public MarenaDBContext(DbContextOptions<MarenaDBContext> options) : base(options)
+        {
+        }
+
+        // Define DbSet properties for your entities here
+        // public DbSet<YourEntity> YourEntities { get; set; }
     }
+    ```
 
-    // Define DbSet properties for your entities here
-    // public DbSet<YourEntity> YourEntities { get; set; }
-}
-```
-2. Generamos una carpeta llamada `Persistence` y agregamos la clase `MarenaDBContext` dentro de esa carpeta.
+2. Create a folder named `Persistence` and add the `MarenaDBContext` class suggested by Copilot inside that folder (Using the "Copy" or "Insert in new file" button).
 
-3. Registramos la clase MarenaDBContext en los servicios cargados por el builder en el archivo Program.cs
-- Register the `MarenaDBContext` in the `builder.services` method in the `Program.cs` file.
-```C#
-// Register MarenaDBContext with the dependency injection container
-builder.Services.AddDbContext<MarenaDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-```
-4. Configuramos la cadena de conexion por defecto a la base de datos SQL Server.
-- Add default connection string to `appsettings.json`
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=your_server_name;Database=your_database_name;User Id=your_user_id;Password=your_password;"
-  }
-}
-```
+3. Register the MarenaDBContext class in the services loaded by the builder in the Program.cs file.
+    ```
+    Register the MarenaDBContext in the `builder.services` method in the Program.cs file
+    ```
+    ```C#
+    // Register MarenaDBContext with the dependency injection container
+    builder.Services.AddDbContext<MarenaDBContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    ```
+
+4. Configure the default connection string to the SQL Server database.
+    ```
+    Add default connection string to appsettings.json
+    ```
+    ```json
+    {
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=your_server_name;Database=your_database_name;User Id=your_user_id;Password=your_password;"
+    }
+    }
+    ```
 ### Troubleshooting
 
 #### UseSqlServer
-Puede pasar que a estas alturas, se nos genere un error al momento de llamar al metodo `UseSqlServer`, utilizando Copilot podemos investigar la causa del error.
-Para solventarlo realziamos lo siguiente:
+It may happen that at this point, an error is generated when calling the `UseSqlServer` method. Using Copilot, we can investigate the cause of the error.
+To solve it, we do the following:
 
-- Seleccionamos el metodo que acabamos de agregar.
-- Hacemos click derecho sobre la seleccion y seleccionamos la opcion "ask copilot"
-- En la ventana de chat, usamos el comando `/explain`
+- Select the method we just added.
+- Right-click on the selection and select the "ask copilot" option.
+- In the chat window, use the `/explain` command.
 - `/explain Why the UseSqlServer is highlighted as an error?`
 
-Copilot nos menciona que hemos olvidado incorporar la referencia al paquete `Microsoft.EntityFrameworkCore.SqlServer`. Existen diversas formas de incorporar este paquete al proyecto, para esta ocasion usaremos la linea de comandos de `dotnet`
+Copilot mentions that we forgot to add the reference to the `Microsoft.EntityFrameworkCore.SqlServer` package. There are several ways to add this package to the project, for this occasion we will use the `dotnet` command line.
 ```powershell
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 ```
 
 #### Trust Server Certificate.
-- Add to connection string: TrustServerCertificate=True;
+- Add this value at the end of the connection string: TrustServerCertificate=True;
 
-## Paso 5. Configurando Migraciones y Entidad Movies
-
-1. Utilizando Copilot Chat preguntemos como generar una entidad llamada Movie, que contenga los siguientes atributos: Id, Name, Score, Genres, Year
-- Generate an entity named Movie with the following attributes: `Id`, `Name`, `Score`, `Genres`, `Year`, use Entity Framework Core Schema validations
-
-```C#
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-public class Movie
-{
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; }
-
-    [Range(0, 10)]
-    public double Score { get; set; }
-
-    [Required]
-    [MaxLength(200)]
-    public string Genres { get; set; }
-
-    [Range(1888, 2100)]
-    public int Year { get; set; }
-}
-```
-2. Agregamos manualmente el modelo dentro del DBContext que se ha definido anteriormente.
-```C#
-using Microsoft.EntityFrameworkCore;
-
-public class MarenaDBContext : DbContext
-{
-    public MarenaDBContext(DbContextOptions<MarenaDBContext> options) : base(options)
+    ```json
     {
+        "ConnectionStrings": {
+            "DefaultConnection": "Server=your_server_name;Database=your_database_name;User Id=your_user_id;Password=your_password;TrustServerCertificate=True;"
+        }
     }
+    ```
 
-    // Define DbSet properties for your entities here
-    public DbSet<Movie> Movies { get; set; }
-}
-```
+## Step 5. Configure Migrations and Movie Entity
 
-3. Con ayuda de Copilot CLI, solicitamos como generar las migraciones para crear la base de datos y la tabla Movie
-```powershell
-ghcs "What is the command to create migrations with Entity Framework Core?"
-```
-- `dotnet ef migrations add Initial_Migration`
-- `dotnet ef database update`
+1. Using Copilot Chat, ask how to generate an entity named Movie, which contains the following attributes: Id, Name, Score, Genres, Year.
+    ```
+    Generate an entity named Movie with the following attributes: Id, Name, Score, Genres, Year. Use Entity Framework Core Schema validations
+    ```
+    ```C#
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
-## Paso 6. Agregamos el controlador para la entidad Movie
+    public class Movie
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
-1. Empleando la herramienta de Copilot Chat, generaremos un controlador basado en la entidad `Movies` generada anteriormente.
-- `Create a .NET API Controller for #Movie.Cs Entity` Notese, como acá usamos las referencias de archivos con la sintaxis "#[fileName]" en el chat.
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }
 
-```C#
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+        [Range(0, 10)]
+        public double Score { get; set; }
 
-namespace Marena.API.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MoviesController : ControllerBase
+        [Required]
+        [MaxLength(200)]
+        public string Genres { get; set; }
+
+        [Range(1888, 2100)]
+        public int Year { get; set; }
+    }
+    ```
+
+2. Manually add the model to the previously defined DBContext.
+    ```C#
+    using Microsoft.EntityFrameworkCore;
+
+    public class MarenaDBContext : DbContext
+    {
+        public MarenaDBContext(DbContextOptions<MarenaDBContext> options) : base(options)
+        {
+        }
+
+        // Define DbSet properties for your entities here
+        public DbSet<Movie> Movies { get; set; }
+    }
+    ```
+
+3. With the help of Copilot Chat, ask how to generate migrations to create the database and the Movie table.
+
+    ```
+    What is the command to create migrations with Entity Framework Core?
+    ```
+    Copilot will possibly suggest two response options:
+
+    **If we run everything from the Nuget Package Manager Console in Visual Studio**
+    - `Add-Migration Initial_Migration`
+    - `Update-Database`
+
+    **If we run everything from a terminal using dotnet cli**
+    - `dotnet ef migrations add Initial_Migration`
+    - `dotnet ef database update`
+
+## Step 6. Add the controller for the Movie entity
+
+1. Using the Copilot Chat tool, generate a controller based on the `Movies` entity created earlier.
+
+    ```
+    Create a .NET API Controller for #Movie.Cs Entity Note, here we use file references with the syntax "#[fileName]" in the chat.
+    ```
+
+    ```C#
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+
+    namespace Marena.API.Controllers
+    {
+        [Route("api/[controller]")]
+        [ApiController]
+        public class MoviesController : ControllerBase
+        {
+            private readonly MarenaDBContext _context;
+
+            public MoviesController(MarenaDBContext context)
+            {
+                _context = context;
+            }
+
+            // GET: api/Movies
+            [HttpGet]
+            public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+            {
+                return await _context.Movies.ToListAsync();
+            }
+
+            // GET: api/Movies/5
+            [HttpGet("{id}")]
+            public async Task<ActionResult<Movie>> GetMovie(int id)
+            {
+                var movie = await _context.Movies.FindAsync(id);
+
+                if (movie == null)
+                {
+                    return NotFound();
+                }
+
+                return movie;
+            }
+
+            // PUT: api/Movies/5
+            [HttpPut("{id}")]
+            public async Task<IActionResult> PutMovie(int id, Movie movie)
+            {
+                if (id != movie.Id)
+                {
+                    return BadRequest();
+                }
+
+                _context.Entry(movie).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MovieExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+
+            // POST: api/Movies
+            [HttpPost]
+            public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+            {
+                _context.Movies.Add(movie);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
+            }
+
+            // DELETE: api/Movies/5
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteMovie(int id)
+            {
+                var movie = await _context.Movies.FindAsync(id);
+                if (movie == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Movies.Remove(movie);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            private bool MovieExists(int id)
+            {
+                return _context.Movies.Any(e => e.Id == id);
+            }
+        }
+    }
+    ```
+    - Add this file with the name `MoviesController.cs` under the `Controllers` folder.
+    - Run the application directly from Visual Studio.
+    - Test the API using a client like **Postman**, **Insomnia**, or **Swagger**.
+
+## Step 7. Abstract logic to Services.
+
+A good development practice is to abstract the existing logic in Controllers to a service class, which allows implementing different business actions. Delegating to the controllers the exclusive responsibility of managing the input and output of API data.
+
+1. Ask Copilot Chat to generate the structure of the service class.
+    ```
+    Create a service class that contains all the logic for CRUD operations of the #Models.cs entity and implement it in #MoviesController.cs.
+    ```
+2. Create a folder named `Services` and within it two subfolders named `Interfaces` and `Implementations` where we will place the interfaces and services respectively.
+   
+3. Incorporate the code suggestions provided by Copilot Chat as appropriate.
+
+4. Insert a new file with the content of the `IMovieService` interface in the `Interfaces` folder.
+    ```C#
+    using Marena.API.Models;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
+    public interface IMovieService
+    {
+        Task<IEnumerable<Movie>> GetMoviesAsync();
+        Task<Movie> GetMovieByIdAsync(int id);
+        Task<Movie> AddMovieAsync(Movie movie);
+        Task<Movie> UpdateMovieAsync(int id, Movie movie);
+        Task<bool> DeleteMovieAsync(int id);
+    }
+    ```
+
+5. Insert a new file with the content of the `MovieService` implementation in the `Implementations` folder.
+    ```C#
+    using Marena.API.Models;
+    using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
+    public class MovieService : IMovieService
     {
         private readonly MarenaDBContext _context;
 
-        public MoviesController(MarenaDBContext context)
+        public MovieService(MarenaDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Movies
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<IEnumerable<Movie>> GetMoviesAsync()
         {
             return await _context.Movies.ToListAsync();
         }
 
-        // GET: api/Movies/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<Movie> GetMovieByIdAsync(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            return await _context.Movies.FindAsync(id);
+        }
 
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
+        public async Task<Movie> AddMovieAsync(Movie movie)
+        {
+            _context.Movies.Add(movie);
+            await _context.SaveChangesAsync();
             return movie;
         }
 
-        // PUT: api/Movies/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<Movie> UpdateMovieAsync(int id, Movie movie)
         {
             if (id != movie.Id)
             {
-                return BadRequest();
+                return null;
             }
 
             _context.Entry(movie).State = EntityState.Modified;
@@ -247,9 +395,9 @@ namespace Marena.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(id))
+                if (!await MovieExistsAsync(id))
                 {
-                    return NotFound();
+                    return null;
                 }
                 else
                 {
@@ -257,396 +405,157 @@ namespace Marena.API.Controllers
                 }
             }
 
-            return NoContent();
+            return movie;
         }
 
-        // POST: api/Movies
-        [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
-        {
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
-        }
-
-        // DELETE: api/Movies/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovie(int id)
+        public async Task<bool> DeleteMovieAsync(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
             {
-                return NotFound();
+                return false;
             }
 
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return true;
         }
 
-        private bool MovieExists(int id)
+        private async Task<bool> MovieExistsAsync(int id)
         {
-            return _context.Movies.Any(e => e.Id == id);
+            return await _context.Movies.AnyAsync(e => e.Id == id);
         }
     }
-}
-```
-- Agregamos este archivo con el nombre de `MoviesController.cs` bajo la carpeta de `Controllers`
-- Ejecutamos la aplicacion directamente desde Visual Studio.
-- Probamos el API mediante algun cliente como Postman, Insomnia o Swagger.
+    ```
+6. Update the `MoviesController.cs` code with the implementation of the `MoviesService` service methods.
+    ```C#
+    using Marena.API.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-## Paso 7. Abstraccion de la logica a Servicios.
-
-Una buena practica de desarrollo, consiste en abstraer la logica existente en Controladores a una clase servicio, que permita implementar diferentes acciones del negocio. Delegando a los controladores la exclusiva responsabilidad de gestionar la entrada y salida de datos del API.
-
-1. Indicamos a Copilot Chat que genere la estructura de la clase servicio.
-```
-Create a Service Class That contains all the logic for CRUD operations of #Models.cs Entity and implement it on #MoviesController.cs
-```
-2. Creamos una carpeta llamada `Services` y dentro de ella dos subcarpetas llamadas `Interfaces` e `Implementations` en donde colocaremos las interfaces y los servicios respectivamente.
-   
-3. Incorporamos las sugerencias de codigo proporcionadas por Copilot Chat segun corresponda.
-
-- Insertamos un nuevo archivo con el contenido de la interfaz `IMovieService` en la carpeta `Interfaces`
-```C#
-using Marena.API.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-public interface IMovieService
-{
-    Task<IEnumerable<Movie>> GetMoviesAsync();
-    Task<Movie> GetMovieByIdAsync(int id);
-    Task<Movie> AddMovieAsync(Movie movie);
-    Task<Movie> UpdateMovieAsync(int id, Movie movie);
-    Task<bool> DeleteMovieAsync(int id);
-}
-
-```
-- Insertamos un nuevo archivo con el contenido de la implementacion del servicio llamado `MovieService` en la carpeta `Implementations`
-```C#
-using Marena.API.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-public class MovieService : IMovieService
-{
-    private readonly MarenaDBContext _context;
-
-    public MovieService(MarenaDBContext context)
+    namespace Marena.API.Controllers
     {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<Movie>> GetMoviesAsync()
-    {
-        return await _context.Movies.ToListAsync();
-    }
-
-    public async Task<Movie> GetMovieByIdAsync(int id)
-    {
-        return await _context.Movies.FindAsync(id);
-    }
-
-    public async Task<Movie> AddMovieAsync(Movie movie)
-    {
-        _context.Movies.Add(movie);
-        await _context.SaveChangesAsync();
-        return movie;
-    }
-
-    public async Task<Movie> UpdateMovieAsync(int id, Movie movie)
-    {
-        if (id != movie.Id)
+        [Route("api/[controller]")]
+        [ApiController]
+        public class MoviesController : ControllerBase
         {
-            return null;
-        }
+            private readonly IMovieService _movieService;
 
-        _context.Entry(movie).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await MovieExistsAsync(id))
+            public MoviesController(IMovieService movieService)
             {
-                return null;
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return movie;
-    }
-
-    public async Task<bool> DeleteMovieAsync(int id)
-    {
-        var movie = await _context.Movies.FindAsync(id);
-        if (movie == null)
-        {
-            return false;
-        }
-
-        _context.Movies.Remove(movie);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    private async Task<bool> MovieExistsAsync(int id)
-    {
-        return await _context.Movies.AnyAsync(e => e.Id == id);
-    }
-}
-```
-- Actualizamos el codigo del controlador `MoviesController.cs` con la implementacion de los metodos del servicio `MoviesService`
-```C#
-using Marena.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Marena.API.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MoviesController : ControllerBase
-    {
-        private readonly IMovieService _movieService;
-
-        public MoviesController(IMovieService movieService)
-        {
-            _movieService = movieService;
-        }
-
-        // GET: api/Movies
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
-        {
-            var movies = await _movieService.GetMoviesAsync();
-            return Ok(movies);
-        }
-
-        // GET: api/Movies/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
-        {
-            var movie = await _movieService.GetMovieByIdAsync(id);
-
-            if (movie == null)
-            {
-                return NotFound();
+                _movieService = movieService;
             }
 
-            return Ok(movie);
-        }
-
-        // PUT: api/Movies/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
-        {
-            var updatedMovie = await _movieService.UpdateMovieAsync(id, movie);
-
-            if (updatedMovie == null)
+            // GET: api/Movies
+            [HttpGet]
+            public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
             {
-                return BadRequest();
+                var movies = await _movieService.GetMoviesAsync();
+                return Ok(movies);
             }
 
-            return NoContent();
-        }
-
-        // POST: api/Movies
-        [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
-        {
-            var createdMovie = await _movieService.AddMovieAsync(movie);
-            return CreatedAtAction(nameof(GetMovie), new { id = createdMovie.Id }, createdMovie);
-        }
-
-        // DELETE: api/Movies/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovie(int id)
-        {
-            var result = await _movieService.DeleteMovieAsync(id);
-
-            if (!result)
+            // GET: api/Movies/5
+            [HttpGet("{id}")]
+            public async Task<ActionResult<Movie>> GetMovie(int id)
             {
-                return NotFound();
+                var movie = await _movieService.GetMovieByIdAsync(id);
+
+                if (movie == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(movie);
             }
 
-            return NoContent();
+            // PUT: api/Movies/5
+            [HttpPut("{id}")]
+            public async Task<IActionResult> PutMovie(int id, Movie movie)
+            {
+                var updatedMovie = await _movieService.UpdateMovieAsync(id, movie);
+
+                if (updatedMovie == null)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
+            }
+
+            // POST: api/Movies
+            [HttpPost]
+            public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+            {
+                var createdMovie = await _movieService.AddMovieAsync(movie);
+                return CreatedAtAction(nameof(GetMovie), new { id = createdMovie.Id }, createdMovie);
+            }
+
+            // DELETE: api/Movies/5
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteMovie(int id)
+            {
+                var result = await _movieService.DeleteMovieAsync(id);
+
+                if (!result)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
         }
     }
-}
+    ```
+
+7. Register the dependency injection of the `MoviesService` service and the `IMoviesService` interface in the `Builder.service` method of the `Program.cs` file.
+    ```C#
+    // Register the MovieService
+    builder.Services.AddScoped<IMovieService, MovieService>();
+    ```
+
+8. Run the API again and test the correct functioning of the CRUD methods.
+
+## Step 8. Create unit tests for the Movies Service.
+
+To run unit tests, a new .NET project dedicated exclusively to tests will be created. Right-click on the solution file in the Visual Studio solution explorer, then click on Add and then on Project.
+
+![Add Project](assets/add-project.png)
+
+The next step is to create a new project of type **xUnit Test Project**, click on **next** and at this point name it **Marena.Tests**. The .NET version to be selected should be the same as the one used in the Web API project, in this case, select .NET 8. Finally, click on **Create**.
+
+With the test project created, the next step is to use GitHub Copilot to build and develop the unit tests using the following prompt:
 
 ```
-
-- Registramos la inyeccion de depencias del servicio `MoviesService` y la interfaz `IMoviesService` en el metodo `Builder.service` del archivo `Program.cs`
-```C#
-// Register the MovieService
-builder.Services.AddScoped<IMovieService, MovieService>();
+Create unit tests for the file #file:'MoviesService.cs' in the project #file:'Marena.Tests.csproj'
 ```
 
-4. Ejecutamos el API nuevamente y probamos el funcionamiento correcto de los metodos CRUD.
+This will create a suggestion in the chat for a new `MoviesServiceTest` file. This file should be created and can be added to the root directory of the Tests project.
 
-## Paso 8. Creamos las pruebas unitarias para el servicio de Movies Service.
-Empleando Copilot Chat, se le solicita la construiccion de los test unitarios mediante el siguiente prompt:
-```
-Create unit tests for the #file:'MoviesService.cs' in the #file:'Marena.Tests.csproj' Project
-```
-_Resultado del prompt:_
+Once this is done, to run the tests follow these steps:
 
-1. Se agregan los paquetes necesarios:
+#### Using Visual Studio
+- Open the solution.
+- Build the solution.
+- Open the Test Explorer Test > Test Explorer.
+- Run all tests (Run All Tests).
 
-```powershell
-dotnet add package xunit
-dotnet add package Moq
-dotnet add package coverlet.collector
-dotnet add package Microsoft.NET.Test.Sdk
-dotnet add package xunit.runner.visualstudio
-dotnet add package Microsoft.EntityFrameworkCore.InMemory
-```
-
-2. Se crea una clase llamada `MovieServiceTests` en el proyecto `Marena.Tests`
-
-```C#
-using Marena.API.Models;
-using Marena.API.Persistence;
-using Marena.API.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-public class MovieServiceTests : IDisposable
-{
-    private readonly MarenaDBContext _context;
-    private readonly IMovieService _movieService;
-
-    public MovieServiceTests()
-    {
-        var options = new DbContextOptionsBuilder<MarenaDBContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        _context = new MarenaDBContext(options);
-        _movieService = new MovieService(_context);
-    }
-
-    [Fact]
-    public async Task GetMoviesAsync_ReturnsAllMovies()
-    {
-        // Arrange
-        var movies = new List<Movie>
-        {
-            new Movie { Id = 1, Name = "Movie 1", Score = 8.5, Genres = "Action", Year = 2020 },
-            new Movie { Id = 2, Name = "Movie 2", Score = 7.0, Genres = "Drama", Year = 2019 }
-        };
-
-        await _context.Movies.AddRangeAsync(movies);
-        await _context.SaveChangesAsync();
-
-        // Act
-        var result = await _movieService.GetMoviesAsync();
-
-        // Assert
-        Assert.Equal(2, result.Count());
-    }
-
-    [Fact]
-    public async Task GetMovieByIdAsync_ReturnsMovie()
-    {
-        // Arrange
-        var movie = new Movie { Id = 1, Name = "Movie 1", Score = 8.5, Genres = "Action", Year = 2020 };
-        await _context.Movies.AddAsync(movie);
-        await _context.SaveChangesAsync();
-
-        // Act
-        var result = await _movieService.GetMovieByIdAsync(1);
-
-        // Assert
-        Assert.Equal(movie, result);
-    }
-
-    [Fact]
-    public async Task AddMovieAsync_AddsMovie()
-    {
-        // Arrange
-        var movie = new Movie { Id = 1, Name = "Movie 1", Score = 8.5, Genres = "Action", Year = 2020 };
-
-        // Act
-        var result = await _movieService.AddMovieAsync(movie);
-
-        // Assert
-        var addedMovie = await _context.Movies.FindAsync(movie.Id);
-        Assert.Equal(movie, addedMovie);
-    }
-
-    [Fact]
-    public async Task UpdateMovieAsync_UpdatesMovie()
-    {
-        // Arrange
-        var movie = new Movie { Id = 1, Name = "Movie 1", Score = 8.5, Genres = "Action", Year = 2020 };
-        await _context.Movies.AddAsync(movie);
-        await _context.SaveChangesAsync();
-
-        movie.Name = "Updated Movie 1";
-
-        // Act
-        var result = await _movieService.UpdateMovieAsync(1, movie);
-
-        // Assert
-        var updatedMovie = await _context.Movies.FindAsync(movie.Id);
-        Assert.Equal("Updated Movie 1", updatedMovie.Name);
-    }
-
-    [Fact]
-    public async Task DeleteMovieAsync_DeletesMovie()
-    {
-        // Arrange
-        var movie = new Movie { Id = 1, Name = "Movie 1", Score = 8.5, Genres = "Action", Year = 2020 };
-        await _context.Movies.AddAsync(movie);
-        await _context.SaveChangesAsync();
-
-        // Act
-        var result = await _movieService.DeleteMovieAsync(1);
-
-        // Assert
-        var deletedMovie = await _context.Movies.FindAsync(1);
-        Assert.Null(deletedMovie);
-        Assert.True(result);
-    }
-
-    public void Dispose()
-    {
-        _context.Database.EnsureDeleted();
-        _context.Dispose();
-    }
-}
-```
-
-3. Se ejecutan los tests.
-
-Para ejecutar los tests se realiza de la siguiente manera:
-
-#### Usando Visual Studio
-- Abrir la solucion.
-- Compilar la solucion.
-- Abrir el explorador de pruebas Test > Test Explorer.
-- Ejecutar todas las pruebas (Run All Tests).
-
-#### Usando .NET CLI
-- Usando la terminal navegar hacia la ruta del proyecto `Marena.Tests`
+#### Using .NET CLI
+- Using the terminal, navigate to the path of the `Marena.Tests` project.
 ```powershell
 cd path/to/Marena.Tests
 ```
-- Ejecutar el comando de ejecucion de pruebas
+- Run the test execution command.
 ```powershell
 dotnet test
 ```
 
+### Troubleshooting.
 
+Most likely, Copilot will try to use the Moq library to mock the database context of the project. However, this can result in many problems and errors in running unit tests in this project.
 
+It is suggested to use Entity Framework's in-memory database instead of Moq for these tests. Add the following package to the Tests project: **Microsoft.EntityFrameworkCore.InMemory.**
+
+Using the following prompt:
+```
+I have noticed that using Moq in the test project to mock the project's DBContext will result in failures 100% of the time. Refactor the unit test code to use Entity Framework InMemory Database instead.
