@@ -211,8 +211,9 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 1. Using the Copilot Chat tool, generate a controller based on the `Movies` entity created earlier.
 
     ```
-    Create a .NET API Controller for #Movie.Cs Entity Note, here we use file references with the syntax "#[fileName]" in the chat.
+    Create a .NET API Controller for #Movie.Cs Entity
     ```
+Note, here we use file references with the syntax "#[fileName]" in the chat.
 
     ```C#
     using Microsoft.AspNetCore.Mvc;
